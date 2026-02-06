@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  
+}
+
+datasource db {
+  provider = "postgresql"
+ 
+
+}
+
+enum Role {
+  ADMIN
+  AGENCE
+  CLIENT
+}
+
+enum StatutBien {
+  LIBRE
+  OCCUPE
+}
+
+enum Categorie{
+  MOYEN
+  LUXE
+}
+
+enum StatutReservation {
+  EN_ATTENTE
+  CONFIRMEE
+  ANNULEE
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  nom_complet  String
+  email        String        @unique
+  mot_passe    String
+  role         Role
+  biens        BienImmobilier[]
+  commentaires Commentaire[]
+  reservations Reservation[]
+}
+
+model BienImmobilier {
+  id           Int           @id @default(autoincrement())
+  nom          String
+  categorie    Categorie
+  image        String?
+  description  String
+  adresse      String
+  statut       StatutBien
+  date_ajout   DateTime      @default(now())
+  agenceId     Int
+  agence       User          @relation(fields: [agenceId], references: [id])
+  commentaires Commentaire[]
+  reservations Reservation[]
+}
+
+model Commentaire {
+  id       Int      @id @default(autoincrement())
+  contenu  String
+  date_publication     DateTime @default(now())
+  userId   Int
+  bienId   Int
+  user     User     @relation(fields: [userId], references: [id])
+  bien     BienImmobilier @relation(fields: [bienId], references: [id])
+}
+
+model Reservation {
+  id        Int      @id @default(autoincrement())
+  dateDebut DateTime
+  dateFin   DateTime?
+  statut    StatutReservation
+  userId    Int
+  bienId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  bien      BienImmobilier @relation(fields: [bienId], references: [id])
+}
