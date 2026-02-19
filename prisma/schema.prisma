@@ -11,6 +11,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+   url      = env("DATABASE_URL")
  
 
 }
@@ -42,7 +43,8 @@ model User {
   nom_complet  String
   email        String        @unique
   mot_passe    String
-  role         Role
+  role         Role          @default(CLIENT)
+  createdAt DateTime  @default(now())
   biens        BienImmobilier[]
   commentaires Commentaire[]
   reservations Reservation[]
@@ -51,11 +53,11 @@ model User {
 model BienImmobilier {
   id           Int           @id @default(autoincrement())
   nom          String
-  categorie    Categorie
+  categorie    Categorie   
   image        String?
   description  String
   adresse      String
-  statut       StatutBien
+  statut       StatutBien    @default(LIBRE)
   date_ajout   DateTime      @default(now())
   agenceId     Int
   agence       User          @relation(fields: [agenceId], references: [id])
@@ -77,7 +79,7 @@ model Reservation {
   id        Int      @id @default(autoincrement())
   dateDebut DateTime
   dateFin   DateTime?
-  statut    StatutReservation
+  statut    StatutReservation   @default(EN_ATTENTE)
   userId    Int
   bienId    Int
   user      User     @relation(fields: [userId], references: [id])
