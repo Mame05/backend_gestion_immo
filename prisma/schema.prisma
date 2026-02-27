@@ -32,6 +32,17 @@ enum Categorie{
   LUXE
 }
 
+enum TypeTransaction {
+  LOCATION
+  VENTE
+}
+
+enum PeriodePaiement {
+  MOIS
+  ANNEE
+  UNIQUE
+}
+
 enum StatutReservation {
   EN_ATTENTE
   CONFIRMEE
@@ -51,18 +62,22 @@ model User {
 }
 
 model BienImmobilier {
-  id           Int           @id @default(autoincrement())
-  nom          String
-  categorie    Categorie   
-  image        String?
-  description  String
-  adresse      String
-  statut       StatutBien    @default(LIBRE)
-  date_ajout   DateTime      @default(now())
+  id              Int           @id @default(autoincrement())
+  nom             String
+  categorie       Categorie   
+  image           String?
+  description     String
+  adresse         String
+  statut          StatutBien    @default(LIBRE)
+  montant         Int              // ex: 50000 ou 50000000
+  typeTransaction TypeTransaction
+  periodePaiement PeriodePaiement? // null si vente
   agenceId     Int
   agence       User          @relation(fields: [agenceId], references: [id])
   commentaires Commentaire[]
   reservations Reservation[]
+
+  createdAt       DateTime         @default(now())
 }
 
 model Commentaire {
