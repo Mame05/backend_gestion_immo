@@ -91,12 +91,14 @@ model Commentaire {
 }
 
 model Reservation {
-  id        Int      @id @default(autoincrement())
-  dateDebut DateTime
-  dateFin   DateTime?
-  statut    StatutReservation   @default(EN_ATTENTE)
-  userId    Int
-  bienId    Int
-  user      User     @relation(fields: [userId], references: [id])
-  bien      BienImmobilier @relation(fields: [bienId], references: [id])
+  id          Int      @id @default(autoincrement())
+  dateDebut   DateTime
+  dateFin     DateTime?
+  statut      StatutReservation   @default(EN_ATTENTE)
+  clientId    Int
+  bienId      Int
+  client      User     @relation(fields: [clientId], references: [id])
+  bien        BienImmobilier @relation(fields: [bienId], references: [id])
+
+  createdAt   DateTime          @default(now())
 }
