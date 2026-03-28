@@ -76,18 +76,29 @@ model BienImmobilier {
   agence       User          @relation(fields: [agenceId], references: [id])
   commentaires Commentaire[]
   reservations Reservation[]
+  images       ImageBien[]
 
   createdAt       DateTime         @default(now())
 }
 
+model ImageBien {
+  id        Int    @id @default(autoincrement())
+  url       String
+  publicId String
+  bienId    Int
+  bien      BienImmobilier @relation(fields: [bienId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
 model Commentaire {
-  id       Int      @id @default(autoincrement())
-  contenu  String
-  date_publication     DateTime @default(now())
-  userId   Int
-  bienId   Int
-  user     User     @relation(fields: [userId], references: [id])
-  bien     BienImmobilier @relation(fields: [bienId], references: [id])
+  id                  Int     @id @default(autoincrement())
+  contenu             String
+  note                Int     @default(0) // ⭐ note de 1 à 5
+  date_publication    DateTime @default(now())
+  clientId            Int
+  bienId              Int
+  client              User     @relation(fields: [clientId], references: [id])
+  bien                BienImmobilier @relation(fields: [bienId], references: [id])
 }
 
 model Reservation {
