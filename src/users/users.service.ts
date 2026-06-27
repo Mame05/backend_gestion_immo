@@ -67,11 +67,42 @@ export class UsersService {
     });
   }
 
-  update(id: number, updateUserDto: UpdateAgenceDto) {
-    return `This action updates a #${id} user`;
+  // ✅ Mise à jour réelle d'une agence/utilisateur
+  async update(id: number, updateUserDto: UpdateAgenceDto) {
+   // Vérifie que l'utilisateur existe (sinon Prisma lève P2025)
+    const existing = await this.prisma.user.findUnique({ where: { id } });
+    if (!existing) {
+      throw new NotFoundException('Utilisateur introuvable');
+    }
+ 
+    // Si jamais un mot de passe est inclus dans le DTO de mise à jour, on le hash
+    const data: any = { ...updateUserDto };
+    if (data.mot_passe) {
+      data.mot_passe = await bcrypt.hash(data.mot_passe, 10);
+    }
+ 
+    return this.prisma.user.update({
+      where: { id },
+      data,
+      select: {
+        id: true,
+        nom_complet: true,
+        email: true,
+        role: true,
+        createdAt: true,
+      },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+   // ✅ Suppression réelle d'une agence/utilisateur
+  async remove(id: number) {
+     const existing = await this.prisma.user.findUnique({ where: { id } });
+    if (!existing) {
+      throw new NotFoundException('Utilisateur introuvable');
+    }
+ 
+    await this.prisma.user.delete({ where: { id } });
+ 
+    return { message: 'Utilisateur supprimé avec succès', id };
   }
 }

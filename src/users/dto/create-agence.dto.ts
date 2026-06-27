@@ -2,11 +2,11 @@ import { IsEmail, IsString, MinLength } from "class-validator";
 
 export class CreateAgenceDto {
   @IsString()
-  nom_complet: string;
+  nom_complet!: string;
 
   @IsEmail()
-  email: string;
+  email!: string;
 
   @MinLength(6)
-  mot_passe: string;
+  mot_passe!: string;
 }
